@@ -1,0 +1,20 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: python-crontab
+Source: https://pypi.python.org/pypi/python-crontab
+
+Files: *
+Copyright: Martin Owens <doctormo@gmail.com>
+License: GPL-3
+
+Files: debian/*
+Copyright: 2013 Jordan Metzmeier <jmetzmeier01@gmail.com>
+License: GPL-3
+
+License: GPL-3
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 3.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-3'.
+

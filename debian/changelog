@@ -1,0 +1,5 @@
+python-crontab (1.8.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #740800).
+
+ -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Wed, 05 Mar 2014 00:09:54 -0600
