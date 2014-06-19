@@ -1,0 +1,13 @@
+# First Comment
+# Edit this line to test for mistaken checks
+
+*/30 * * * * firstcommand
+* 10-20/3 * * * range
+# Middle Comment
+* * * 10 * byweek # Comment One
+# * * * * * disabled
+ 00 5  *   *   *      spaced    # Comment  Two
+
+
+@reboot rebooted # re-id
+# Last Comment @has this # extra
