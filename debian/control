@@ -13,7 +13,7 @@ Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}
 Description: Python module for reading and writing crontab files
  python-crontab is a Python module for reading and writing crontab files
- and accessing the system cron automatically and simply using a direct
+ and accessing the system crontabs automatically and simply using a direct
  API. This package includes the module for python2.
  .
  Features include:
@@ -28,7 +28,7 @@ Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends}
 Description: Python3 module for reading and writing crontab files
  python-crontab is a Python module for reading and writing crontab files
- and accessing the system cron automatically and simply using a direct
+ and accessing the system crontabs automatically and simply using a direct
  API. This package includes the module for python3.
  .
  Features include:
