@@ -1,0 +1,12 @@
+# From: Jordan Metzmeier <jmetzmeier01@gmail.com>
+# Subject: Make unit test running exit non-zero on test failure
+# This is added so that package build will fail if unit tests fail
+# during the build
+--- a/tests/test_all.py
++++ b/tests/test_all.py
+@@ -7,3 +7,5 @@
+     suites = [unittest.defaultTestLoader.loadTestsFromName(s) for s in modules]
+     testSuite = unittest.TestSuite(suites)
+     text_runner = unittest.TextTestRunner().run(testSuite)
++    if text_runner.errors or text_runner.failures:
++        raise SystemExit("Some unit tests failed")

@@ -2,7 +2,14 @@ Source: python-crontab
 Maintainer: Jordan Metzmeier <jmetzmeier01@gmail.com>
 Section: python
 Priority: optional
-Build-Depends: python-setuptools (>= 0.6b3), python-all (>= 2.6.6-3), debhelper (>= 9), python3-all (>= 3.3), dh-python
+Build-Depends: debhelper (>= 9),
+               dh-python,
+               python-all (>= 2.6.6-3),
+               python-croniter,
+               python-setuptools (>= 0.6b3),
+               python3-all (>= 3.3),
+               python3-croniter,
+               python3-dateutil
 Standards-Version: 3.9.5
 Homepage: https://launchpad.net/python-crontab
 X-Python3-Version: >= 3.3
@@ -10,7 +17,7 @@ X-Python-Version: >= 2.6
 
 Package: python-crontab
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: python-croniter, python-dateutil, ${misc:Depends}, ${python:Depends}
 Description: Python module for reading and writing crontab files
  python-crontab is a Python module for reading and writing crontab files
  and accessing the system crontabs automatically and simply using a direct
@@ -25,7 +32,7 @@ Description: Python module for reading and writing crontab files
 
 Package: python3-crontab
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}
+Depends: python3-croniter, python3-dateutil, ${misc:Depends}, ${python3:Depends}
 Description: Python3 module for reading and writing crontab files
  python-crontab is a Python module for reading and writing crontab files
  and accessing the system crontabs automatically and simply using a direct

@@ -1,8 +1,12 @@
 #!/usr/bin/make -f
 
-export DH_VERBOSE=1
 export PYBUILD_NAME=crontab
 
 %:
 	dh $@ --with python2,python3 --buildsystem=pybuild
 
+override_dh_auto_test:
+	PYBUILD_SYSTEM=custom \
+	PYBUILD_TEST_ARGS="cd {dir}/tests; python{version} test_all.py" \
+	LC_ALL=C.UTF-8 \
+	dh_auto_test

@@ -1,0 +1,19 @@
+# From: Jordan Metzmeier <jmetzmeier01@gmail.com>
+# Subject: Fix tests so they can be ran as root
+# One of the unit tests is a check to see if the current user
+# is root and asserts that this is false. This not the case
+# when the build is being done by pbuilder. I opted to just remove
+# the test as I didn't see it as useful
+--- a/tests/test_interaction.py
++++ b/tests/test_interaction.py
+@@ -64,10 +64,6 @@
+     def setUp(self):
+         self.crontab = CronTab(tabfile='data/test.tab')
+ 
+-    def test_00_root(self):
+-        """Not Root User"""
+-        self.assertFalse(self.crontab.root)
+-
+     def test_01_presevation(self):
+         """All Entries Re-Rendered Correctly"""
+         results = RESULT_TAB.split('\n')
