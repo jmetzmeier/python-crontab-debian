@@ -1,0 +1,6 @@
+Tests: python3-crontab
+Depends: python3-crontab
+
+Tests: python-debian
+Depends: python-crontab
+
