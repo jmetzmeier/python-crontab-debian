@@ -3,7 +3,11 @@ Upstream-Name: python-crontab
 Source: https://pypi.python.org/pypi/python-crontab
 
 Files: *
-Copyright: 2103 Martin Owens <doctormo@gmail.com>
+Copyright: 2011-2014 Martin Owens <doctormo@gmail.com>
+License: GPL-3+
+
+Files: tests/test_usage.py
+Copyright: 2012 Jay Sigbrandt <jsigbrandt@slb.com>
 License: GPL-3+
 
 Files: debian/*
