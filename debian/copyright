@@ -8,6 +8,7 @@ License: GPL-3+
 
 Files: tests/test_usage.py
 Copyright: 2012 Jay Sigbrandt <jsigbrandt@slb.com>
+           2012 Martin Owens <doctormo@gmail.com>
 License: GPL-3+
 
 Files: debian/*
