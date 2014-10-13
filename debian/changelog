@@ -1,6 +1,7 @@
 python-crontab (1.8.1-2) unstable; urgency=low
 
   * Fix copyright for tests/test_usage.py
+  * Add Vcs fields to the control file
 
  -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Mon, 13 Oct 2014 00:09:23 -0500
 
