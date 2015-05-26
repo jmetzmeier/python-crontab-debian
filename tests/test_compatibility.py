@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2012 Martin Owens
 #
@@ -23,15 +23,14 @@ Test crontab interaction.
 import os
 import sys
 
-sys.path.insert(0, '../')
-os.environ['SYSTEMV_TEST'] = 'True'
-
 import unittest
-from crontab import CronTab, SYSTEMV
+import crontab
 try:
     from test import test_support
 except ImportError:
     from test import support as test_support
+
+TEST_DIR = os.path.dirname(__file__)
 
 INITAL_TAB = """
 # First Comment
@@ -40,12 +39,20 @@ INITAL_TAB = """
 
 class CompatTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
+    @classmethod
+    def setUpClass(cls):
+        crontab.SYSTEMV = True
+
+    @classmethod
+    def tearDownClass(cls):
+        crontab.SYSTEMV = False
+
     def setUp(self):
-        self.crontab = CronTab(tab=INITAL_TAB)
+        self.crontab = crontab.CronTab(tab=INITAL_TAB)
 
     def test_00_enabled(self):
         """Test Compatability Mode"""
-        self.assertTrue(SYSTEMV)
+        self.assertTrue(crontab.SYSTEMV)
 
     def test_01_addition(self):
         """New Job Rendering"""
@@ -67,13 +74,15 @@ class CompatTestCase(unittest.TestCase):
         self.assertNotEqual(job.render(), '4-9 2-10/2 */3 * * addition2')
         self.assertEqual(job.render(), '4,5,6,7,8,9 2,4,6,8,10 1,11,21,31 * * addition2')
 
+
     def test_03_specials(self):
         """Ignore Special Symbols"""
-        tab = CronTab(tabfile='data/specials.tab')
+        tab = crontab.CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'specials.tab'))
         self.assertEqual(tab.render(), """0 * * * * hourly
 0 0 * * * daily
 0 0 * * 0 weekly
 """)
+
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2013 Martin Owens
 #
@@ -23,14 +23,14 @@ Test crontab interaction.
 import os
 import sys
 
-sys.path.insert(0, '../')
-
 import unittest
-from crontab import CronTab, PY3
+from crontab import CronTab, CronSlices, CronSlice, PY3
 try:
     from test import test_support
 except ImportError:
     from test import support as test_support
+
+TEST_DIR = os.path.dirname(__file__)
 
 if PY3:
     unicode = str
@@ -47,6 +47,7 @@ COMMANDS = [
 RESULT_TAB = """# First Comment
 # Edit this line to test for mistaken checks
 
+# m h dom mon dow user command
 */30 * * * * firstcommand
 * 10-20/3 * * * range
 # Middle Comment
@@ -59,14 +60,12 @@ RESULT_TAB = """# First Comment
 # Last Comment @has this # extra
 """
 
-class BasicTestCase(unittest.TestCase):
+sys.stderr = open('/dev/null', 'w')
+
+class InteractionTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
-        self.crontab = CronTab(tabfile='data/test.tab')
-
-    def test_00_root(self):
-        """Not Root User"""
-        self.assertFalse(self.crontab.root)
+        self.crontab = CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'test.tab'))
 
     def test_01_presevation(self):
         """All Entries Re-Rendered Correctly"""
@@ -87,6 +86,7 @@ class BasicTestCase(unittest.TestCase):
     def test_03_blank(self):
         """Render Blank"""
         job = self.crontab.new(command='blank')
+        self.assertEqual(repr(job), '<CronJob \'* * * * * blank\'>')
         self.assertEqual(job.render(), '* * * * * blank')
 
     def test_04_number(self):
@@ -146,6 +146,8 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(job.render(), '* 2-10/4 * * * seq')
         job.hour.also.during(1, 4)
         self.assertEqual(job.render(), '* 1-4,2-10/4 * * * seq')
+        job.hour.also.every(4)
+        self.assertEqual(job.render(), '* */4,1-4,2-10/4 * * * seq')
 
     def test_10_comment(self):
         """Render cron Comments"""
@@ -166,6 +168,53 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(unicode(job), '# * * * * * dis')
         job.enable()
         self.assertEqual(unicode(job), '* * * * * dis')
+
+    def test_13_plural(self):
+        """Plural API"""
+        job = self.crontab.new(command='plural')
+        job.minutes.every(4)
+        job.hours.on(5,6)
+        job.day.on(4)
+        job.months.on(2)
+        self.assertEqual(unicode(job), '*/4 5,6 4 2 * plural')
+
+    def test_14_valid(self):
+        """Valid and Invalid"""
+        job = self.crontab.new(command='valid')
+        job.minute.every(2)
+        job.valid = False
+        with self.assertRaises(ValueError):
+            unicode(job)
+
+    def test_15_slices(self):
+        """Invalid Slices"""
+        mon = CronSlices('* * * * *')
+        with self.assertRaises(ValueError):
+            CronSlices('* * * */15 *')
+        with self.assertRaises(AssertionError):
+            mon.setall(mon)
+
+    def test_16_slice(self):
+        """Single Slice"""
+        dow = CronSlice({'name': 'M', 'max': 7, 'min': 0, 'enum': ['a']}, '*/6')
+        self.assertEqual(repr(dow), '<CronSlice \'*/6\'>')
+
+        self.assertEqual(repr(dow._v('a')), 'a')
+        with self.assertRaises(ValueError):
+            dow._v('b')
+
+        self.assertEqual(dow.get_range().render(), '*')
+        with self.assertRaises(ValueError):
+            dow.get_range('%')
+
+    def test_17_range_cmp(self):
+        """Compare ranges"""
+        dow = CronSlice({'max': 5, 'min': 0})
+        three = dow.get_range(2, 4)
+        self.assertGreater(three, 2)
+        self.assertLess(three, 4)
+        self.assertEqual(str(three), '2-4')
+        
 
     def test_20_write(self):
         """Write CronTab to file"""
@@ -205,19 +254,19 @@ class BasicTestCase(unittest.TestCase):
 
     def test_24_special_r(self):
         """Read Specials"""
-        tab = CronTab(tabfile='data/specials_enc.tab')
+        tab = CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'specials_enc.tab'))
         self.assertEqual(tab.render(), """@hourly hourly\n@daily daily\n@daily midnight\n@weekly weekly\n@reboot reboot\n""")
         self.assertEqual(len(list(tab)), 5)
 
     def test_24_special_d(self):
         """Removal All Specials"""
-        tab = CronTab(tabfile='data/specials.tab')
+        tab = CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'specials.tab'))
         tab.remove_all()
         self.assertEqual(len(list(tab)), 0)
 
     def test_24_special_w(self):
         """Write Specials"""
-        tab = CronTab(tabfile='data/specials.tab')
+        tab = CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'specials.tab'))
         self.assertEqual(tab.render(), """@hourly hourly\n@daily daily\n@weekly weekly\n""")
         self.assertEqual(len(list(tab)), 3)
 
@@ -258,5 +307,5 @@ class BasicTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     test_support.run_unittest(
-       BasicTestCase,
+       InteractionTestCase,
     )

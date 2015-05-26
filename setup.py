@@ -17,7 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from distutils.core import setup
+from setuptools import setup
 from crontab import __version__, __pkgname__
 import os
 
@@ -37,6 +37,7 @@ setup(
     author           = 'Martin Owens',
     url              = 'https://launchpad.net/python-crontab',
     author_email     = 'doctormo@gmail.com',
+    test_suite       = 'tests',
     platforms        = 'linux',
     license          = 'GPLv3',
     py_modules       = [ 'crontab', 'cronlog' ],

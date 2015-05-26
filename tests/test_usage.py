@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2012 Jay Sigbrandt <jsigbrandt@slb.com>
 #                    Martin Owens <doctormo@gmail.com>
@@ -24,14 +24,14 @@ Test crontab usage.
 import os
 import sys
 
-sys.path.insert(0, '../')
-
 import unittest
-from crontab import CronTab, __doc__
+import crontab
 try:
     from test import test_support
 except ImportError:
     from test import support as test_support
+
+TEST_DIR = os.path.dirname(__file__)
 
 class DummyStdout(object):
     def write(self, text):
@@ -39,36 +39,78 @@ class DummyStdout(object):
 
 BASIC = '@hourly firstcommand\n\n'
 USER = '\n*/4 * * * * user_command # user_comment\n\n\n'
+crontab.CRONCMD = "%s %s" % (sys.executable, os.path.join(TEST_DIR, 'data', 'crontest'))
 
 def flush():
     pass
 
 class UseTestCase(unittest.TestCase):
     """Test use documentation in crontab."""
+    def setUp(self):
+        self.filenames = []
+
     def test_01_empty(self):
         """Open system crontab"""
-        cron = CronTab()
+        cron = crontab.CronTab()
         self.assertEqual(cron.render(), "")
+        self.assertEqual(cron.__unicode__(), "")
 
     def test_02_user(self):
         """Open a user's crontab"""
-        cron = CronTab(user='basic')
+        cron = crontab.CronTab(user='basic')
         self.assertEqual(cron.render(), BASIC)
 
     def test_03_usage(self):
         """Dont modify crontab"""
-        cron = CronTab(tab='')
+        cron = crontab.CronTab(tab='')
         sys.stdout = DummyStdout()
         sys.stdout.flush = flush
-        exec(__doc__)
+        try:
+            exec(crontab.__doc__)
+        except ImportError:
+            pass
         sys.stdout = sys.__stdout__
         self.assertEqual(cron.render(), '')
 
     def test_04_username(self):
         """Username is True"""
-        cron = CronTab(user=True)
+        cron = crontab.CronTab(user=True)
         self.assertNotEqual(cron.user, True)
         self.assertEqual(cron.render(), USER)
+
+    def test_05_nouser(self):
+        """Username doesn't exist"""
+        cron = crontab.CronTab(user='nouser')
+        self.assertEqual(cron.render(), '')
+
+    def test_06_touser(self):
+        """Write to use API"""
+        cron = crontab.CronTab(tab=USER)
+        cron.write_to_user('bob')
+        filename = os.path.join(TEST_DIR, 'data', 'bob.tab')
+        self.filenames.append(filename)
+        self.assertTrue(os.path.exists(filename))
+
+    def test_07_ioerror(self):
+        """No filename ioerror"""
+        with self.assertRaises(IOError):
+            cron = crontab.CronTab(user='error')
+            cron.read()
+
+    def test_08_cronitem(self):
+        """CronItem Standalone"""
+        item = crontab.CronItem(line='noline')
+        self.assertTrue(item.is_enabled())
+        with self.assertRaises(UnboundLocalError):
+            item.delete()
+        item.command = str('nothing')
+        self.assertEqual(item.render(), '* * * * * nothing')
+
+    def tearDown(self):
+        for filename in self.filenames:
+            if os.path.exists(filename):
+                os.unlink(filename)
+
 
 if __name__ == '__main__':
     test_support.run_unittest(

@@ -1,3 +1,9 @@
+python-crontab (1.9.0) precise; urgency=low
+
+ * Added vixie cron compatability
+
+ -- Martin Owens (DoctorMO) <doctormo@gmail.com>  Fri, 02 Jan 2015 07:37:12 -0500
+
 python-crontab (1.4.4) precise; urgency=low
 
  * Added every method to jobs for convience

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) YEAR Martin Owens
 #
@@ -24,8 +24,6 @@ import os
 import sys
 from datetime import datetime, date
 
-sys.path.insert(0, '../')
-
 import unittest
 from crontab import CronTab
 from cronlog import CronLog, LogReader
@@ -33,6 +31,8 @@ try:
     from test import test_support
 except ImportError:
     from test import support as test_support
+
+TEST_DIR = os.path.dirname(__file__)
 
 INITAL_TAB = """
 * * * * * userscript &> /dev/null
@@ -72,17 +72,18 @@ USER_DATES = [
     datetime(YEAR, 4, 4, 21, 25, 1),
     datetime(YEAR, 4, 4, 21, 24, 1),
   ]
-READ_LINE = [ 'The End', 'Sickem', '2', '9', 'First Line' ]
+LONG_LINE = 'A really long line which can test log lines ability to put two bits together'
+READ_LINE = [ 'The End', 'Sickem', '2', '9', 'First Line', LONG_LINE ]
 
 class BasicTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
-        self.crontab = CronTab(tab=INITAL_TAB, log='data/test.log')
+        self.crontab = CronTab(tab=INITAL_TAB, log=os.path.join(TEST_DIR, 'data', 'test.log'))
 
     def test_00_logreader(self):
         """Log Reader"""
         lines = READ_LINE[:]
-        reader = LogReader('data/basic.log')
+        reader = LogReader(os.path.join(TEST_DIR, 'data', 'basic.log'), mass=50)
         for line in reader:
             self.assertEqual(line.strip(), lines.pop(0))
 
@@ -96,7 +97,7 @@ class BasicTestCase(unittest.TestCase):
 
     def test_02_cronlog(self):
         """Cron Log Items"""
-        entries = list(CronLog('data/test.log'))
+        entries = list(CronLog(os.path.join(TEST_DIR, 'data', 'test.log')))
         self.assertEqual(len(entries), 19)
         self.assertEqual(entries[0]['pid'], "16592")
         self.assertEqual(entries[3]['pid'], "16574")
@@ -137,6 +138,13 @@ class BasicTestCase(unittest.TestCase):
             self.assertEqual(log['pid'], pids.pop(0))
             self.assertEqual(log['date'], dates.pop(0))
         self.assertEqual(pids, [])
+
+    def test_08_readerror(self):
+        """Cron Log Error"""
+        self.crontab.log.pipe.close()
+        with self.assertRaises(IOError):
+            list(self.crontab.log.readlines())
+
 
 if __name__ == '__main__':
     test_support.run_unittest(

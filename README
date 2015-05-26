@@ -57,7 +57,7 @@ will work only on Unix and require you to have the right permissions::
 
     from crontab import CronTab
 
-    system_cron   = CronTab()
+    empty_cron    = CronTab()
     my_user_cron  = CronTab(user=True)
     users_cron    = CronTab(user='username')
 
@@ -67,6 +67,13 @@ And two ways from non-system sources that will work on Windows too::
     mem_cron = CronTab(tab="""
       * * * * * command
     """)
+
+Special per-command user flag for vixie cron format (new in 1.9)::
+
+    system_cron = CronTab(tabfile='/etc/crontab', user=False)
+    job = system_cron[0]
+    job.user != None
+    system_cron.new(command='new_command', user='root')
 
 Creating a new job is as simple as::
 
@@ -272,7 +279,8 @@ you first try using the schedule function on your cron job object.
 Extra Support
 =============
 
+ - Support for vixie cron with username addition with user flag
  - Support for SunOS, AIX & HP with compatibility 'SystemV' mode.
- - Python 3.2 and Python 2.7/2.6 tested.
+ - Python 3.4 and Python 2.7/2.6 tested.
  - Windows support works for non-system crontabs only.
    ( see mem_cron and file_cron examples above for usage )
