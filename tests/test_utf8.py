@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2014 Martin Owens
@@ -24,8 +24,6 @@ Test crontab use of UTF-8 filenames and strings
 import os
 import sys
 
-sys.path.insert(0, '../')
-
 import unittest
 from crontab import CronTab, PY3
 try:
@@ -33,28 +31,32 @@ try:
 except ImportError:
     from test import support as test_support
 
+TEST_DIR = os.path.dirname(__file__)
+
 if PY3:
     unicode = str
 
+content = """
+*/4 * * * * ůțƒ_command # ůțƒ_comment
+"""
+filename = os.path.join(TEST_DIR, 'data', 'output-ůțƒ-8.tab')
 
 class Utf8TestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
-        self.crontab = CronTab(tabfile='data/a-ůțƒ-8.tab')
+        self.crontab = CronTab(tab=content)
 
-    def test_01_read(self):
-        """Read from utf8 Filename"""
+    def test_01_input(self):
+        """Read UTF-8 contents"""
         self.assertTrue(self.crontab)
 
     def test_02_write(self):
-        """Write to utf8 Filename"""
-        self.crontab.write("data/output-ůțƒ-8.tab")
-
-    def test_03_presevation(self):
-        """All Entries Re-Rendered Correctly"""
-        self.assertEqual(
-           open("data/a-ůțƒ-8.tab", "r").read(),
-           open("data/output-ůțƒ-8.tab", "r").read())
+        """Write/Read UTF-8 Filename"""
+        self.crontab.write(filename)
+        crontab = CronTab(tabfile=filename)
+        self.assertTrue(crontab)
+        self.assertEqual(content, open(filename, "r").read())
+        os.unlink(filename)
 
     def test_04_command(self):
         """Read Command String"""

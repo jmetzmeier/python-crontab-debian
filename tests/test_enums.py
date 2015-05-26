@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2011 Martin Owens
 #
@@ -55,7 +55,7 @@ RESULT_TAB = """
 * * * * * com2 # Comment One
 """
 
-class BasicTestCase(unittest.TestCase):
+class EnumTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
         self.crontab = CronTab(tab=INITAL_TAB)
@@ -118,5 +118,5 @@ class BasicTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     test_support.run_unittest(
-       BasicTestCase,
+       EnumTestCase,
     )

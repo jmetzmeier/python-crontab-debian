@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2013 Martin Owens
 #
@@ -32,13 +32,15 @@ try:
 except ImportError:
     from test import support as test_support
 
+TEST_DIR = os.path.dirname(__file__)
+
 if PY3:
     unicode = str
 
 class EveryTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
-        self.crontab = CronTab(tabfile='data/test.tab')
+        self.crontab = CronTab(tabfile=os.path.join(TEST_DIR, 'data', 'test.tab'))
 
     def test_00_minutes(self):
         """Every Minutes"""

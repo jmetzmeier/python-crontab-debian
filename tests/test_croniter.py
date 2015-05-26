@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright (C) 2013 Martin Owens
 #
@@ -27,7 +27,7 @@ from datetime import datetime
 sys.path.insert(0, '../')
 
 import unittest
-from crontab import CronTab
+import crontab
 try:
     from test import test_support
 except ImportError:
@@ -38,11 +38,24 @@ INITAL_TAB = """
 20 * * * * execute # comment
 """
 
-class BasicTestCase(unittest.TestCase):
+class CroniterTestCase(unittest.TestCase):
     """Test basic functionality of crontab."""
     def setUp(self):
-        self.crontab = CronTab(tab=INITAL_TAB)
+        self.crontab = crontab.CronTab(tab=INITAL_TAB)
         self.job = list(self.crontab.find_command('execute'))[0]
+        try:
+            import croniter
+        except ImportError:
+            self.skipTest("Croniter not installed")
+
+    def test_00_nocroniter(self):
+        """No Croniter"""
+        # Remove croniter if importer before.
+        sys.modules.pop('croniter', None)
+        old, sys.path = sys.path, []
+        with self.assertRaises(ImportError):
+            self.job.schedule(datetime(2001, 10, 11, 1, 12, 10))
+        sys.path = old
 
     def test_01_schedule(self):
         """Get Scheduler"""
@@ -55,13 +68,19 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(ct.get_next(), datetime(2000, 10, 11, 5, 20, 0))
         self.assertEqual(ct.get_next(), datetime(2000, 10, 11, 6, 20, 0))
 
-    def test_02_prev(self):
+    def test_03_prev(self):
         """Get Prev Scheduled Items"""
         ct = self.job.schedule(datetime(2001, 10, 11, 1, 12, 10))
         self.assertEqual(ct.get_prev(), datetime(2001, 10, 11, 0, 20, 0))
         self.assertEqual(ct.get_prev(), datetime(2001, 10, 10, 23, 20, 0))
 
+    def test_04_current(self):
+        """Get Current Item"""
+        ct = self.job.schedule(datetime(2001, 10, 11, 1, 12, 10))
+        self.assertEqual(ct.get_current(), datetime(2001, 10, 11, 1, 12, 10))
+        self.assertEqual(ct.get_current(), datetime(2001, 10, 11, 1, 12, 10))
+
 if __name__ == '__main__':
     test_support.run_unittest(
-       BasicTestCase,
+       CroniterTestCase,
     )
