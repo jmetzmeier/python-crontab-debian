@@ -1,8 +1,7 @@
 Tests: python3-crontab
-Depends: python3-crontab, python
+Depends: python3-crontab, python, python3-pytest
 Restrictions: allow-stderr
 
 Tests: python-crontab
-Depends: python-crontab
+Depends: python-crontab, python-pytest
 Restrictions: allow-stderr
-

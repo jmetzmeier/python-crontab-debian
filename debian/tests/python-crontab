@@ -2,4 +2,4 @@
 set -e -u
 cp -a tests/ "$ADTTMP"
 cd "$ADTTMP/tests/"
-LC_ALL=C.UTF-8 python test_all.py
+LC_ALL=C.UTF-8 py.test

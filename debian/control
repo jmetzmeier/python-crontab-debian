@@ -7,16 +7,18 @@ Build-Depends: debhelper (>= 9),
                python-all (>= 2.6.6-3),
                python-croniter,
                python-setuptools (>= 0.6b3),
+               python-pytest,
                python3-all (>= 3.3),
+               python3-setuptools,
                python3-croniter,
-               python3-dateutil
-Standards-Version: 3.9.5
+               python3-dateutil,
+               python3-pytest
+Standards-Version: 3.9.6
 Homepage: https://launchpad.net/python-crontab
 Vcs-Browser: https://github.com/jmetzmeier/python-crontab-debian
 Vcs-Git: https://github.com/jmetzmeier/python-crontab-debian.git
 X-Python3-Version: >= 3.3
 X-Python-Version: >= 2.6
-XS-Testsuite: autopkgtest
 
 Package: python-crontab
 Architecture: all

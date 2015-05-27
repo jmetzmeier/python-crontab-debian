@@ -1,3 +1,20 @@
+python-crontab (1.9.3-1) unstable; urgency=medium
+
+  * New upstream version (Closes: #786921)
+  * Update debian/watch with the output for the new
+  PyPI redirector (Closes: #786920)
+  * Remove all Debian patches that were merged upstream
+  * Add Build-Depends on python3-setuptools
+  * Use pytest for testrunner because some test output is lost
+  with the default runner
+  * Add patch to remove test for failures when croniter is missing,
+  which fails under python3 and is not optional for the Debian package
+  * Remove XS-Testsuite field from the control file as it is no longer
+  required
+  * Bump standards version to 3.9.6, no changes were required
+
+ -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Tue, 26 May 2015 14:44:11 -0500
+
 python-crontab (1.8.1-2) unstable; urgency=low
 
   * Fix copyright for tests/test_usage.py

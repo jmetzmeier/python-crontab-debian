@@ -1,0 +1,22 @@
+From: Jordan Metzmeier <jmetzmeier01@gmail.com>
+Subject: Remove the test for croniter import when croniter is
+not present. This test fails when ran under python3 and croniter
+is not optional for the Debian packaging
+--- a/tests/test_croniter.py
++++ b/tests/test_croniter.py
+@@ -48,15 +48,6 @@
+         except ImportError:
+             self.skipTest("Croniter not installed")
+
+-    def test_00_nocroniter(self):
+-        """No Croniter"""
+-        # Remove croniter if importer before.
+-        sys.modules.pop('croniter', None)
+-        old, sys.path = sys.path, []
+-        with self.assertRaises(ImportError):
+-            self.job.schedule(datetime(2001, 10, 11, 1, 12, 10))
+-        sys.path = old
+-
+     def test_01_schedule(self):
+         """Get Scheduler"""
+         ct = self.job.schedule(datetime(2009, 10, 11, 5, 12, 10))
