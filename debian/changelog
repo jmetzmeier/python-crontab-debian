@@ -12,6 +12,8 @@ python-crontab (1.9.3-1) unstable; urgency=medium
   * Remove XS-Testsuite field from the control file as it is no longer
   required
   * Bump standards version to 3.9.6, no changes were required
+  * Change python depends from 2.6 to 2.7 as the module is no longer 2.6
+  compatible (Closes: #787026)
 
  -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Tue, 26 May 2015 14:44:11 -0500
 

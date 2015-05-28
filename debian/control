@@ -4,7 +4,7 @@ Section: python
 Priority: optional
 Build-Depends: debhelper (>= 9),
                dh-python,
-               python-all (>= 2.6.6-3),
+               python-all (>= 2.7),
                python-croniter,
                python-setuptools (>= 0.6b3),
                python-pytest,
@@ -18,7 +18,7 @@ Homepage: https://launchpad.net/python-crontab
 Vcs-Browser: https://github.com/jmetzmeier/python-crontab-debian
 Vcs-Git: https://github.com/jmetzmeier/python-crontab-debian.git
 X-Python3-Version: >= 3.3
-X-Python-Version: >= 2.6
+X-Python-Version: >= 2.7
 
 Package: python-crontab
 Architecture: all
