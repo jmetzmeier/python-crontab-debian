@@ -7,6 +7,6 @@ export PYBUILD_NAME=crontab
 
 override_dh_auto_test:
 	PYBUILD_SYSTEM=custom \
-	PYBUILD_TEST_ARGS="py.test-{version}" \
+	PYBUILD_TEST_ARGS="python{version} -m pytest" \
 	LC_ALL=C.UTF-8 \
 	dh_auto_test

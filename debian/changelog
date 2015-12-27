@@ -1,3 +1,10 @@
+python-crontab (1.9.3-2) unstable; urgency=medium
+
+  * Switch from using py.test-{version} to python{version} -m pytest
+  during build to work around a pytest bug (Closes: #808898)
+
+ -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Sun, 27 Dec 2015 10:20:49 -0600
+
 python-crontab (1.9.3-1) unstable; urgency=medium
 
   * New upstream version (Closes: #786921)
