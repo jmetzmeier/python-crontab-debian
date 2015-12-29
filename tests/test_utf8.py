@@ -3,19 +3,18 @@
 #
 # Copyright (C) 2014 Martin Owens
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.
 #
 """
 Test crontab use of UTF-8 filenames and strings
@@ -24,6 +23,7 @@ Test crontab use of UTF-8 filenames and strings
 import os
 import sys
 
+import locale
 import unittest
 from crontab import CronTab, PY3
 try:
@@ -52,6 +52,7 @@ class Utf8TestCase(unittest.TestCase):
 
     def test_02_write(self):
         """Write/Read UTF-8 Filename"""
+        self.assertEqual(locale.getpreferredencoding(), 'UTF-8')
         self.crontab.write(filename)
         crontab = CronTab(tabfile=filename)
         self.assertTrue(crontab)
@@ -77,7 +78,21 @@ class Utf8TestCase(unittest.TestCase):
         """Write New via UTF-8"""
         c = self.crontab.new(command='\xc5\xaf\xc8\x9b\xc6\x92_command',
                              comment='\xc5\xaf\xc8\x9b\xc6\x92_comment')
-        self.crontab.render()
+        self.assertEqual(self.crontab.render(), u"""
+*/4 * * * * ůțƒ_command # ůțƒ_comment
+
+* * * * * ůțƒ_command # ůțƒ_comment
+""")
+        self.assertEqual(type(c.command), unicode)
+        self.assertEqual(type(c.comment), unicode)
+
+    def test_08_utf8_str(self):
+        """Test UTF8 (non unicode) strings"""
+        self.crontab[0].command = '￡１２'
+        self.crontab[0].comment = '￼𝗔𝗕𝗖𝗗'
+        self.assertEqual(self.crontab.render(), u"""
+*/4 * * * * ￡１２ # ￼𝗔𝗕𝗖𝗗
+""")     
 
 if __name__ == '__main__':
     test_support.run_unittest(

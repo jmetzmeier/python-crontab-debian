@@ -2,19 +2,18 @@
 #
 # Copyright (C) 2013 Martin Owens
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.
 #
 """
 Test crontab interaction.
@@ -106,6 +105,13 @@ class InteractionTestCase(unittest.TestCase):
         self.assertEqual(job.render(), '* 4 5 6 * fields')
         job.dow.on(7)
         self.assertEqual(job.render(), '* 4 5 6 0 fields')
+
+    def test_05_multiple_fields(self):
+        job = self.crontab.new(command='fields')
+        job.hour.on(4, 6, 7)
+        self.assertEqual(job.render(), '* 4,6,7 * * * fields')
+        job.dow.on('SUN', 'FRI')
+        self.assertEqual(job.render(), '* 4,6,7 * * SUN,FRI fields')
 
     def test_06_clear(self):
         """Render Hours Days and Weeks"""

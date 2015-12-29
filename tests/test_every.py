@@ -2,19 +2,18 @@
 #
 # Copyright (C) 2013 Martin Owens
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.
 #
 """
 Test simple 'every' api.
@@ -47,6 +46,8 @@ class EveryTestCase(unittest.TestCase):
         for job in self.crontab:
             job.every(3).minutes()
             self.assertEqual(job.slices.clean_render(), '*/3 * * * *')
+            job.minutes.every(5)
+            self.assertEqual(job.slices.clean_render(), '*/5 * * * *')
 
     def test_01_hours(self):
         """Every Hours"""
@@ -92,6 +93,15 @@ class EveryTestCase(unittest.TestCase):
             job.every_reboot()
             self.assertEqual(job.slices.render(), '@reboot')
             self.assertEqual(job.slices.clean_render(), '* * * * *')
+
+    def test_08_newitem(self):
+        """Every on New Item"""
+        job = self.crontab.new(command='hourly')
+        job.every().hour()
+        self.assertEqual(job.slices.render(), '@hourly')
+        job = self.crontab.new(command='firstly')
+        job.hours.every(2)
+        self.assertEqual(job.slices.render(), '* */2 * * *')
 
 if __name__ == '__main__':
     test_support.run_unittest(

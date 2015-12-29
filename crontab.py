@@ -1,24 +1,18 @@
 #
-# Copyright 2014, Martin Owens <doctormo@gmail.com>
+# Copyright 2015, Martin Owens <doctormo@gmail.com>
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Ideas from gnome-schedule: Philip Van Hoof, Gaute Hope, Kristof Vansant
-#
-# REQUEST: Please do NOT simply copy and paste this code into your own
-#          projects. Please package this module for your distribution and
-#          use as a direct dependancy.
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.
 #
 """
 from crontab import CronTab
@@ -98,7 +92,7 @@ import subprocess as sp
 from datetime import date, datetime
 
 __pkgname__ = 'python-crontab'
-__version__ = '1.9.3'
+__version__ = '1.9.5'
 
 ITEMREX = re.compile(r'^\s*([^@#\s]+)\s+([^@#\s]+)\s+([^@#\s]+)\s+([^@#\s]+)'
                      r'\s+([^@#\s]+)\s+([^#\n]*)(\s+#\s*([^\n]*)|$)')
@@ -157,6 +151,12 @@ def pipeOpen(cmd, *args, **flags):
             l += len(k)==1 and ("-%s" % (k,), str(v)) or ("--%s=%s" % (k,v),)
     l += tuple(args)
     return sp.Popen(tuple(a for a in l if a), stdout=sp.PIPE, stderr=sp.PIPE)
+
+def _unicode(text):
+    """Convert to the best string format for this python version"""
+    if type(text) is str and not PY3:
+        return unicode(text, 'utf-8')
+    return text
 
 
 class CronTab(object):
@@ -418,8 +418,7 @@ class CronItem(object):
 
     def parse(self, line):
         """Parse a cron line string and save the info as the objects."""
-        if type(line) is str and not PY3:
-            line = unicode(line, 'utf-8')
+        line = _unicode(line)
         if not line or line[0] == '#':
             self.enabled = False
             line = line[1:].strip()
@@ -456,8 +455,7 @@ class CronItem(object):
 
     def render(self):
         """Render this set cron-job to a string"""
-        if type(self.command) is str and not PY3:
-            self.command = unicode(self.command, 'utf-8')
+        self.command = _unicode(self.command)
         user = ''
         if self.cron and self.cron.user is False:
             if not self.user:
@@ -465,8 +463,7 @@ class CronItem(object):
             user = self.user + ' '
         result = u"%s %s%s" % (str(self.slices), user, self.command)
         if self.comment:
-            if type(self.comment) is str and not PY3:
-                self.comment = unicode(self.comment, 'utf-8')
+            self.comment = _unicode(self.comment)
             result += u" # " + self.comment
         if not self.enabled:
             result = u"# " + result
@@ -518,6 +515,10 @@ class CronItem(object):
     def frequency_per_day(self):
         """Returns the number of time this item will execute in any day"""
         return self.slices.frequency_per_day()
+
+    def frequency_per_hour(self):
+        """Returns the number of times this item will execute in any hour"""
+        return self.slices.frequency_per_hour()
 
     def schedule(self, date_from=None):
         """Return a croniter schedule is available."""
@@ -662,6 +663,19 @@ class CronSlices(list):
         self.special = None
         if args and not self.setall(*args):
             raise ValueError("Can't set cron value to: %s" % str(args))
+        self.is_valid = self.is_self_valid
+
+    def is_self_valid(self, *args):
+        """Object version of is_valid"""
+        return CronSlices.is_valid(*(args or [self]))
+
+    @classmethod
+    def is_valid(cls, *args):
+        """Returns true if the arguments are valid cron pattern"""
+        try:
+            return bool(cls(*args))
+        except:
+            return False
 
     def setall(self, to, *slices):
         """Parses the various ways date/time frequency can be specified"""
@@ -677,14 +691,17 @@ class CronSlices(list):
                 slices = to.strip().split(' ')
             elif to.strip()[0] == '@':
                 to = to[1:]
+                slices = None
             else:
                 slices = [to]
 
-            if to == 'reboot':
+            if 'reboot' in (to, to[1:]):
                 self.special = '@reboot'
                 return True
             elif to in SPECIALS.keys():
                 return self.setall(SPECIALS[to])
+            elif not slices:
+                return False
 
         if id(slices) == id(self):
             raise AssertionError("Can not set cron to itself!")
@@ -724,6 +741,8 @@ class CronSlices(list):
         return self.frequency_per_year(year=year) * self.frequency_per_day()
 
     def frequency_per_year(self, year=None):
+        """Returns the number of times this item will execute
+           in a given year (default is this year)"""
         result = 0
         if not year:
             year = date.today().year
@@ -740,8 +759,12 @@ class CronSlices(list):
         return result
 
     def frequency_per_day(self):
-        """Returns the number of time this item will execute in any day"""
+        """Returns the number of times this item will execute in any day"""
         return len(self[0]) * len(self[1])
+
+    def frequency_per_hour(self):
+        """Returns the number of times this item will execute in any hour"""
+        return len(self[0])
 
     def __str__(self):
         return self.render()

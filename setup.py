@@ -2,19 +2,18 @@
 #
 # Copyright (C) 2008 Martin Owens
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library.
 #
 
 from setuptools import setup
@@ -39,7 +38,7 @@ setup(
     author_email     = 'doctormo@gmail.com',
     test_suite       = 'tests',
     platforms        = 'linux',
-    license          = 'GPLv3',
+    license          = 'LGPLv3',
     py_modules       = [ 'crontab', 'cronlog' ],
     provides         = [ 'crontab', 'cronlog' ],
     install_requires = [ 'python-dateutil' ],
@@ -50,7 +49,7 @@ setup(
       'Intended Audience :: Developers',
       'Intended Audience :: Information Technology',
       'Intended Audience :: System Administrators',
-      'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+      'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
       'Operating System :: POSIX',
       'Operating System :: POSIX :: Linux',
       'Operating System :: POSIX :: SunOS/Solaris',

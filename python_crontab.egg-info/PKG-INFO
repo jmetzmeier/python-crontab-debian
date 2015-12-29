@@ -1,11 +1,11 @@
 Metadata-Version: 1.1
 Name: python-crontab
-Version: 1.9.3
+Version: 1.9.5
 Summary: Python Crontab API
 Home-page: https://launchpad.net/python-crontab
 Author: Martin Owens
 Author-email: doctormo@gmail.com
-License: GPLv3
+License: LGPLv3
 Description: .. image:: https://launchpadlibrarian.net/134092458/python-cron-192.png
             :class: floating-box
             :alt: Python Crontab Logo
@@ -94,6 +94,7 @@ Description: .. image:: https://launchpadlibrarian.net/134092458/python-cron-192
             job.day.on(4, 5, 6)
         
             job.dow.on('SUN')
+            job.dow.on('SUN', 'FRI')
             job.month.during('APR', 'NOV')
         
         Each time restriction will clear the previous restriction::
@@ -192,6 +193,11 @@ Description: .. image:: https://launchpadlibrarian.net/134092458/python-cron-192
         Write to some other user's crontab::
         
             cron.write_to_user( user='bob' )
+        
+        Validate a cron time string::
+        
+            from crontab import CronSlices
+            bool = CronSlices.is_valid('0/2 * * * *')
         
         Proceeding Unit Confusion
         =========================
@@ -299,7 +305,7 @@ Classifier: Development Status :: 6 - Mature
 Classifier: Intended Audience :: Developers
 Classifier: Intended Audience :: Information Technology
 Classifier: Intended Audience :: System Administrators
-Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
 Classifier: Operating System :: POSIX
 Classifier: Operating System :: POSIX :: Linux
 Classifier: Operating System :: POSIX :: SunOS/Solaris

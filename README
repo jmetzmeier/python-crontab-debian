@@ -86,6 +86,7 @@ And setting the job's time restrictions::
     job.day.on(4, 5, 6)
 
     job.dow.on('SUN')
+    job.dow.on('SUN', 'FRI')
     job.month.during('APR', 'NOV')
 
 Each time restriction will clear the previous restriction::
@@ -184,6 +185,11 @@ Write to this user's crontab (unix only)::
 Write to some other user's crontab::
 
     cron.write_to_user( user='bob' )
+
+Validate a cron time string::
+
+    from crontab import CronSlices
+    bool = CronSlices.is_valid('0/2 * * * *')
 
 Proceeding Unit Confusion
 =========================
