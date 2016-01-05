@@ -1,0 +1,23 @@
+Description: Fix test which fails if the current year is a leap year
+Author: Jordan Metzmeier <jmetzmeier01@gmail.com>
+Origin: Stuart Prescott <stuart@debian.org>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/tests/test_frequency.py
++++ b/tests/test_frequency.py
+@@ -133,13 +133,13 @@
+     def test_14_all(self):
+         """Test Maximum"""
+         self.job.setall("* * * * *")
+-        self.assertEqual(self.job.frequency(), 525600)
++        self.assertEqual(self.job.frequency(year=2010), 525600)
+         self.assertEqual(self.job.frequency_per_year(year=2010), 365)
+         self.assertEqual(self.job.frequency_per_day(), 1440)
+         self.job.setall("*")
+         self.assertEqual(self.job.frequency_per_day(), 1440)
+         self.assertEqual(self.job.frequency_per_year(year=2010), 365)
+-        self.assertEqual(self.job.frequency(), 525600)
++        self.assertEqual(self.job.frequency(year=2010), 525600)
+ 
+     def test_15_compare(self):
+         """Compare Times"""
