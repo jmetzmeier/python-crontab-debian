@@ -2,4 +2,6 @@
 set -e -u
 cp -a tests/ "$ADTTMP"
 cd "$ADTTMP/tests/"
-LC_ALL=C.UTF-8 py.test-3
+for py in $(py3versions -i); do
+    LC_ALL=C.UTF-8 "$py" -m pytest
+done

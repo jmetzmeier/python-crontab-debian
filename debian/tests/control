@@ -1,5 +1,5 @@
 Tests: python3-crontab
-Depends: python3-crontab, python, python3-pytest
+Depends: python3-crontab, python, python3-pytest, python3-all
 Restrictions: allow-stderr
 
 Tests: python-crontab

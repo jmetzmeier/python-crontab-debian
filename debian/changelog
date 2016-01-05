@@ -2,8 +2,9 @@ python-crontab (1.9.3-2) unstable; urgency=medium
 
   * Switch from using py.test-{version} to python{version} -m pytest
   during build to work around a pytest bug (Closes: #808898)
-  * Add patch to fix a frequency test which was fails if the current
+  * Add patch to fix a frequency test which fails if the current
   year is a leap year
+  * Update DEP8 python3 tests to test all installed versions of python
 
  -- Jordan Metzmeier <jmetzmeier01@gmail.com>  Tue, 05 Jan 2016 16:20:14 -0600
 
